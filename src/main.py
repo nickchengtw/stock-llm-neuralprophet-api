@@ -1,5 +1,16 @@
 from fastapi import FastAPI
+from sqlmodel import SQLModel
+
 from src.api.get_stocks import router as api_router
+from src.config import engine
+from src.models import Stock, NpPrediction, LlmPrediction
+
+
+def init_db():
+    print("Creating tables (if not exist)...")
+    SQLModel.metadata.create_all(engine)
+    print("Tables ready")
+
 
 app = FastAPI(
     title="Backend API of project Stock LLM NeuralProphet",
@@ -7,6 +18,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
+init_db()
 app.include_router(api_router)
 
 @app.get("/", tags=["Root"])
