@@ -4,5 +4,11 @@
 
 ```bash
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+uvicorn src.main:app --reload
+```
+
+## Run with Docker Compose
+
+```bash
+docker compose up --build -d
 ```
