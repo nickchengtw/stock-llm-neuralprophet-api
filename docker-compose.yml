@@ -6,9 +6,16 @@ services:
     container_name: api
     ports:
       - "80:8000"
+    restart: unless-stopped
     environment:
-      DB_HOST: user
+      DB_HOST: postgres
       DB_USER: user
       DB_PASSWORD: 1234
       DB_NAME: stock
-    restart: unless-stopped
+    networks:
+      - stock_llm_neuralprophet
+
+networks:
+    stock_llm_neuralprophet:
+        external: true
+        name: stock_llm_neuralprophet
