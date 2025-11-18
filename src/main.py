@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from sqlmodel import SQLModel
 
-from src.api.get_stocks import router as api_router
+from src.router import router as api_router
 from src.config import engine
-from src.models import Stock, NpPrediction, LlmPrediction
 
 
 def init_db():
