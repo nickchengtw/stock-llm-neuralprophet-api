@@ -17,7 +17,7 @@ def get_stocks(session: Session = Depends(get_session)):
     return get_stocks_controller(session)
 
 
-@router.get("/stocks/{symbol}", response_model=list[Stock])
+@router.get("/stocks/{symbol}", response_model=Stock)
 def get_stock(
     symbol: str,
     session: Session = Depends(get_session)
