@@ -40,6 +40,8 @@ def get_stock_prices(
 def get_stock_prediction(
     symbol: str,
     method: Literal["llm", "neuralprophet"] = Query(..., description="Prediction method"),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    offset: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(10, ge=1, le=100, description="Maximum number of records to return")
 ):
-    return get_stock_prediction_controller(symbol, method, session)
+    return get_stock_prediction_controller(symbol, method, offset, limit, session)
