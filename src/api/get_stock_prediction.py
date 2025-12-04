@@ -8,6 +8,8 @@ from src.models import Stock, NpPrediction, LlmPrediction
 def get_stock_prediction_controller(
     symbol: str,
     method: Literal["llm", "neuralprophet"],
+    offset: int,
+    limit: int,
     session: Session
 ):
     # Verify stock exists
@@ -17,39 +19,41 @@ def get_stock_prediction_controller(
 
     # Query latest prediction
     if method == "llm":
-        prediction = session.exec(
+        all_prediction = session.exec(
             select(LlmPrediction)
             .where(LlmPrediction.symbol == symbol)
             .order_by(LlmPrediction.trade_date.desc())
-            .limit(1)
-        ).first()
+            .offset(offset)
+            .limit(limit)
+        ).all()
 
-        if not prediction:
+        if not all_prediction:
             raise HTTPException(status_code=404, detail=f"No LLM prediction for {symbol}")
 
         return {
-            "llm": {
+            "llm": [{
                 "next_day": prediction.trade_date.isoformat(),
                 "price": float(prediction.prediction_value),
                 "prediction_calculated_time": prediction.created_at.isoformat(),
-            }
+            } for prediction in all_prediction]
         }
 
     elif method == "neuralprophet":
-        prediction = session.exec(
+        all_prediction = session.exec(
             select(NpPrediction)
             .where(NpPrediction.symbol == symbol)
             .order_by(NpPrediction.trade_date.desc())
-            .limit(1)
-        ).first()
+            .offset(offset)
+            .limit(limit)
+        ).all()
 
-        if not prediction:
+        if not all_prediction:
             raise HTTPException(status_code=404, detail=f"No NeuralProphet prediction for {symbol}")
 
         return {
-            "neuralprophet": {
+            "neuralprophet": [{
                 "next_day": prediction.trade_date.isoformat(),
                 "price": float(prediction.prediction_value),
                 "prediction_calculated_time": prediction.created_at.isoformat(),
-            }
+            } for prediction in all_prediction]
         }
